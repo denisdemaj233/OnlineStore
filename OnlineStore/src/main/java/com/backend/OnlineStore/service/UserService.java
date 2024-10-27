@@ -2,6 +2,8 @@ package com.backend.OnlineStore.service;
 
 import com.backend.OnlineStore.entity.User;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
+import com.backend.OnlineStore.model.UserDTO;
+import com.backend.OnlineStore.model.UserMapper;
 import com.backend.OnlineStore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,9 @@ public class UserService {
     private UserRepository userRepository;
 
 
-    public User registerUser(User user) {
-        user.setPassword(user.getPassword());
-        userRepository.save(user);
-        return user;
+    public UserDTO registerUser(UserDTO userDTO) {
+        User user = userRepository.save(UserMapper.INSTANCE.userDTOToUser(userDTO));
+        return UserMapper.INSTANCE.userToUserDTO(user);
     }
 
     public User findUserByEmail(String email) {

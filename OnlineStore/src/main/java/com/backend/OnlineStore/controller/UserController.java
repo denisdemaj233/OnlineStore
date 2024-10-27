@@ -29,8 +29,8 @@ public class UserController {
         }
     }
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
+    public UserDTO registerUser(@RequestBody UserDTO userDTO) {
+        return userService.registerUser(userDTO);
     }
 
     @GetMapping("/email/{email}")

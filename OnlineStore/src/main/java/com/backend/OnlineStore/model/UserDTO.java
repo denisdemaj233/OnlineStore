@@ -1,17 +1,16 @@
 package com.backend.OnlineStore.model;
 
+import com.backend.OnlineStore.entity.Role;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
 public class UserDTO {
-    private Long id;
+
     private String email;
     private String city;
-    private String country;
-    private String street;
     private String zipCode;
-    private String avatarUrl;
-    private String roleName;
 
 
 }
