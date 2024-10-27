@@ -1,5 +1,6 @@
 package com.backend.OnlineStore.controller;
 import com.backend.OnlineStore.entity.Order;
+import com.backend.OnlineStore.model.OrderDTO;
 import com.backend.OnlineStore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,20 +18,20 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order savedOrder = orderService.createOrder(order);
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
+        OrderDTO savedOrder = orderService.createOrder(orderDTO);
         return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
     }
 
 
     @GetMapping("/user/{userId}")
-    public Optional<List<Order>> getOrdersByUser(@PathVariable Long userId) {
+    public Optional<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
         return orderService.findOrdersByUser(userId);
     }
 
 
     @GetMapping("/{id}")
-    public Optional<Order> getOrderById(@PathVariable Long id) {
+    public Optional<OrderDTO> getOrderById(@PathVariable Long id) {
         return orderService.findOrderById(id);
     }
 

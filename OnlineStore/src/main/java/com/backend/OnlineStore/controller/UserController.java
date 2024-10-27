@@ -34,20 +34,20 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Optional<User>> findUserByEmail(@PathVariable String email) {
-        Optional<User> user = userService.findUserByEmail(email);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<Optional<UserDTO>> findUserByEmail(@PathVariable String email) {
+        UserDTO userDTO = userService.findUserByEmail(email);
+        return ResponseEntity.ok(Optional.ofNullable(userDTO));
     }
 
 
     @PutMapping("/profile")
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    public UserDTO updateUser(@RequestBody UserDTO userDTO) {
+        return userService.updateUser(userDTO);
     }
 
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
+    public UserDTO getUserById(@PathVariable Long id) {
         return userService.findUserById(id);
     }
 

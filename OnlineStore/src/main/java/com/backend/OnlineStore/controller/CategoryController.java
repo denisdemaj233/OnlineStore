@@ -1,6 +1,7 @@
 package com.backend.OnlineStore.controller;
 
 import com.backend.OnlineStore.entity.Category;
+import com.backend.OnlineStore.model.CategoryDTO;
 import com.backend.OnlineStore.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,20 +20,20 @@ public class CategoryController {
 
 
     @GetMapping
-    public List<Category> getAllCategories() {
+    public List<CategoryDTO> getAllCategories() {
         return categoryService.findAllCategories();
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category savedCategory = categoryService.saveCategory(category);
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO savedCategory = categoryService.saveCategory(categoryDTO);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        Category category = categoryService.findCategoryById(id);
-        return ResponseEntity.ok(category);
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
+        CategoryDTO categoryDTO = categoryService.findCategoryById(id);
+        return ResponseEntity.ok(categoryDTO);
     }
 
     @DeleteMapping("/{id}")

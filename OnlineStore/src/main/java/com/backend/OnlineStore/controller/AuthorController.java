@@ -1,6 +1,6 @@
 package com.backend.OnlineStore.controller;
 
-import com.backend.OnlineStore.entity.Author;
+import com.backend.OnlineStore.model.AuthorDTO;
 import com.backend.OnlineStore.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,19 +16,19 @@ public class AuthorController {
 
 
     @PostMapping
-    public Author saveAuthor(@RequestBody Author author) {
-        return authorService.saveAuthor(author);
+    public AuthorDTO saveAuthor(@RequestBody AuthorDTO authorDTO) {
+        return authorService.saveAuthor(authorDTO);
     }
 
 
     @GetMapping("/{id}")
-    public Optional<Author> getAuthorById(@PathVariable Long id) {
+    public Optional<AuthorDTO> getAuthorById(@PathVariable Long id) {
         return authorService.findAuthorById(id);
     }
 
 
     @GetMapping("/search")
-    public Optional<Author> getAuthorByName(@RequestParam String firstName, @RequestParam String lastName) {
+    public Optional<AuthorDTO> getAuthorByName(@RequestParam String firstName, @RequestParam String lastName) {
         return authorService.findAuthorByName(firstName, lastName);
     }
 

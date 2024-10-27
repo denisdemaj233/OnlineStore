@@ -6,11 +6,11 @@ import com.backend.OnlineStore.model.UserDTO;
 import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service
 public class UserService {
-
 
     private final UserRepository userRepository;
 
@@ -20,13 +20,17 @@ public class UserService {
 
 
     public UserDTO registerUser(final UserDTO userDTO) {
-        User user = userRepository.save(UserMapper.INSTANCE.dtoToEntity(userDTO));
-        return UserMapper.INSTANCE.entityToDTO(user);
+
+        User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
+        User savedUser = userRepository.save(user);
+        return UserMapper.INSTANCE.userToUserDTO(savedUser);
     }
 
-    public Optional<User> findUserByEmail(String email) {
-        return Optional.ofNullable(userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found")));
+    public UserDTO findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+
+        return UserMapper.INSTANCE.userToUserDTO(user);
     }
 
 
@@ -35,13 +39,17 @@ public class UserService {
     }
 
 
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public UserDTO updateUser(UserDTO userDTO) {
+        User user = userRepository.save(UserMapper.INSTANCE.userDTOToUser(userDTO));
+        return UserMapper.INSTANCE.userToUserDTO(user);
     }
 
 
-    public Optional<User> findUserById(Long id) {
-        return userRepository.findById(id);
+    public UserDTO findUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
+
+        return UserMapper.INSTANCE.userToUserDTO(user);
     }
 
 
@@ -49,17 +57,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public boolean authenticate(String username, String password) {
 
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User with email " + username + " not found"));
+    public boolean authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
 
-        if (password.matches(user.getPassword())) {
-            return true;
-        } else {
-            return false;
-        }
-
-
+        return password.matches(user.getPassword());
     }
 }

@@ -1,6 +1,7 @@
 package com.backend.OnlineStore.controller;
 
 import com.backend.OnlineStore.entity.OrderLine;
+import com.backend.OnlineStore.model.OrderLineDTO;
 import com.backend.OnlineStore.service.OrderLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,13 @@ public class OrderLineController {
 
 
     @PostMapping
-    public OrderLine createOrderLine(@RequestBody OrderLine orderLine) {
-        return orderLineService.saveOrderLine(orderLine);
+    public OrderLineDTO createOrderLine(@RequestBody OrderLineDTO orderLineDTO) {
+        return orderLineService.saveOrderLine(orderLineDTO);
     }
 
-    // Get order lines by order ID
+
     @GetMapping("/order/{orderId}")
-    public Optional<List<OrderLine>> getOrderLinesByOrder(@PathVariable Long orderId) {
+    public Optional<List<OrderLineDTO>> getOrderLinesByOrder(@PathVariable Long orderId) {
         return orderLineService.findOrderLinesByOrder(orderId);
     }
 

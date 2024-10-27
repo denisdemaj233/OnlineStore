@@ -2,12 +2,15 @@ package com.backend.OnlineStore.model.mappers;
 
 import com.backend.OnlineStore.entity.Product;
 import com.backend.OnlineStore.model.ProductDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
+import org.mapstruct.factory.*;
 
 @Mapper(componentModel="spring")
+public interface ProductMapper{
 
-public interface ProductMapper extends GenericMapper<ProductDTO, Product>{
+    ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
-    ProductMapper INSTANCE= Mappers.getMapper(ProductMapper.class);
+    ProductDTO productToProductDTO(Product product);
+
+    Product productDTOToProduct(ProductDTO productDTO);
 }
