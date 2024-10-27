@@ -21,13 +21,13 @@ public class UserService {
 
 
     public UserDTO registerUser(final UserDTO userDTO) {
-        User user = userRepository.save(UserMapper.INSTANCE.userDTOToUser(userDTO));
-        return UserMapper.INSTANCE.userToUserDTO(user);
+        User user = userRepository.save(UserMapper.INSTANCE.dtoToEntity(userDTO));
+        return UserMapper.INSTANCE.entityToDTO(user);
     }
 
     public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        return Optional.ofNullable(userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found")));
     }
 
 

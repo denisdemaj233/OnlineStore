@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 public class OrderDTO {
-    private Long id;
+
     private String userName;
     private double totalCost;
     private String deliveryAddress;

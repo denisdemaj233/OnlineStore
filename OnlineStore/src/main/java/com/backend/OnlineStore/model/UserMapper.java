@@ -5,11 +5,8 @@ import org.mapstruct.*;
 import org.mapstruct.factory.*;
 
 @Mapper(componentModel="spring")
-public interface UserMapper{
+public interface UserMapper extends GenericMapper<UserDTO, User> {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    UserDTO userToUserDTO(User user);
-
-    User userDTOToUser(UserDTO userDTO);
 }
