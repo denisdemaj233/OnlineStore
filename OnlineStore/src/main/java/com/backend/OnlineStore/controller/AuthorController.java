@@ -28,7 +28,7 @@ public class AuthorController {
 
 
     @GetMapping("/search")
-    public Author getAuthorByName(@RequestParam String firstName, @RequestParam String lastName) {
+    public Optional<Author> getAuthorByName(@RequestParam String firstName, @RequestParam String lastName) {
         return authorService.findAuthorByName(firstName, lastName);
     }
 

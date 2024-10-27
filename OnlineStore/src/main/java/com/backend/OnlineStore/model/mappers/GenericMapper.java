@@ -1,4 +1,4 @@
-package com.backend.OnlineStore.model;
+package com.backend.OnlineStore.model.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

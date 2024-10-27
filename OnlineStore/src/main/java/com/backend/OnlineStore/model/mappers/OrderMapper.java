@@ -1,6 +1,7 @@
-package com.backend.OnlineStore.model;
+package com.backend.OnlineStore.model.mappers;
 
 import com.backend.OnlineStore.entity.Order;
+import com.backend.OnlineStore.model.OrderDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
