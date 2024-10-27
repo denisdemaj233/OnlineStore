@@ -34,12 +34,12 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public List<Order> findOrdersByUser(Long userId) {
+    public  Optional<List<Order>> findOrdersByUser(Long userId) {
         return orderRepository.findByUserId(userId);
     }
 
 
-    public List<Order> findOrdersByStatus(OrderStatus status) {
+    public  Optional<List<Order>> findOrdersByStatus(OrderStatus status) {
         return orderRepository.findByStatus(status);
     }
 

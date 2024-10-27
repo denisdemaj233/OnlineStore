@@ -23,7 +23,7 @@ public class AuthorService {
     }
 
 
-    public Author findAuthorByName(String firstName, String lastName) {
+    public Optional<Author> findAuthorByName(String firstName, String lastName) {
         return authorRepository.findByFirstNameAndLastName(firstName, lastName);
     }
 

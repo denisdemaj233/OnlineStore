@@ -5,13 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByCategoryId(Long categoryId);
+    Optional<List<Product>> findByCategoryId(Long categoryId);
 
+    Optional<List<Product>> findByTitleContaining(String title);
 
-    List<Product> findByTitleContaining(String title);
-
-    Page<Product> findAll(Pageable pageable);
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orderlines")
@@ -22,7 +23,7 @@ public class OrderLineController {
 
     // Get order lines by order ID
     @GetMapping("/order/{orderId}")
-    public List<OrderLine> getOrderLinesByOrder(@PathVariable Long orderId) {
+    public Optional<List<OrderLine>> getOrderLinesByOrder(@PathVariable Long orderId) {
         return orderLineService.findOrderLinesByOrder(orderId);
     }
 

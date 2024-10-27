@@ -4,8 +4,10 @@ import com.backend.OnlineStore.entity.OrderLine;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderLineRepository extends JpaRepository<OrderLine, Long> {
 
-    List<OrderLine> findByOrderId(Long orderId);
+
+    Optional<List<OrderLine> > findByOrderId(Long orderId);
 }

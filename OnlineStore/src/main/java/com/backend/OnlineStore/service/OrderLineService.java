@@ -5,6 +5,7 @@ import com.backend.OnlineStore.repository.OrderLineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderLineService {
@@ -17,7 +18,7 @@ public class OrderLineService {
         return orderLineRepository.save(orderLine);
     }
 
-    public List<OrderLine> findOrderLinesByOrder(Long orderId) {
+    public Optional<List<OrderLine>> findOrderLinesByOrder(Long orderId) {
         return orderLineRepository.findByOrderId(orderId);
     }
 

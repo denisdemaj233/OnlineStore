@@ -27,7 +27,7 @@ public class ProductController {
 
     // Search products by title (user view)
     @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String title) {
+    public Optional<List<Product>> searchProducts(@RequestParam String title) {
         return productService.searchProductsByTitle(title);
     }
 
@@ -40,7 +40,7 @@ public class ProductController {
 
     // Get products by category (user view)
     @GetMapping("/category/{categoryId}")
-    public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
+    public Optional<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
         return productService.findProductsByCategory(categoryId);
     }
 

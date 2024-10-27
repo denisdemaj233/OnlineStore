@@ -39,12 +39,12 @@ public class ProductService {
     }
 
 
-    public List<Product> findProductsByCategory(Long categoryId) {
+    public Optional<List<Product>> findProductsByCategory(Long categoryId) {
         return productRepository.findByCategoryId(categoryId);
     }
 
 
-    public List<Product> searchProductsByTitle(String title) {
+    public  Optional<List<Product>> searchProductsByTitle(String title) {
         return productRepository.findByTitleContaining(title);
     }
 
