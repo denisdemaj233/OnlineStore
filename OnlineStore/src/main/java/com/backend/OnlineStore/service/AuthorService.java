@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-
 import java.util.Optional;
 
 @Service
@@ -24,7 +23,7 @@ public class AuthorService {
     }
 
     public Author toEntity(AuthorDTO dto) {
-        if ( dto == null ) {
+        if (dto == null) {
             return null;
         }
 
@@ -36,7 +35,7 @@ public class AuthorService {
 
 
     public AuthorDTO toDTO(Author entity) {
-        if ( entity == null ) {
+        if (entity == null) {
             return null;
         }
 

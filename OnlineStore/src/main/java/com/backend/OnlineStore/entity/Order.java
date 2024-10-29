@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 
 
 @Entity
@@ -35,10 +35,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderLine> orderLines;
-
-
 
 
 }

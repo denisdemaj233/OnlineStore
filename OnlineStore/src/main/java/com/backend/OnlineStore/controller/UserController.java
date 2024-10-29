@@ -14,13 +14,18 @@ import java.util.Optional;
 @RequestMapping("/api/user")
 public class UserController {
 
+
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginRequest) {
+    public ResponseEntity<String> login(@RequestBody User user) {
 
-        boolean isAuthenticated = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+        boolean isAuthenticated = userService.authenticate(user.getEmail(), user.getPassword());
 
         if (isAuthenticated) {
             return ResponseEntity.ok("Login successful");
@@ -28,6 +33,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
+
     @PostMapping("/register")
     public UserDTO registerUser(@RequestBody UserDTO userDTO) {
         return userService.registerUser(userDTO);

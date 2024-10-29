@@ -12,5 +12,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<List<Product>> findByTitleContaining(String title);
 
-
 }

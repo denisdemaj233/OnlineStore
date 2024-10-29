@@ -28,7 +28,6 @@ public class User {
     private String zipCode;
 
 
-
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

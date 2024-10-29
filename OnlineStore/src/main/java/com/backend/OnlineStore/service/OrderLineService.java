@@ -30,7 +30,7 @@ public class OrderLineService {
         this.productRepository = productRepository;
     }
 
-    // Convert OrderLine to OrderLineModel
+
     public OrderLineDTO toDTO(OrderLine orderLine) {
         if (orderLine == null) {
             return null;
@@ -43,7 +43,6 @@ public class OrderLineService {
         );
     }
 
-    // Convert OrderLineModel to OrderLine entity
     public OrderLine toEntity(OrderLineDTO orderLineModel) {
         if (orderLineModel == null) {
             return null;
@@ -70,7 +69,7 @@ public class OrderLineService {
         }
 
         return orderLines.stream()
-                .map(this::toDTO) // Përdor metodën e konvertimit të individëve
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -80,22 +79,22 @@ public class OrderLineService {
         }
 
         return orderLineDTOs.stream()
-                .map(this::toEntity) // Përdor metodën e konvertimit të individëve
+                .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
-    // Create OrderLine
+
     public OrderLine save(OrderLine orderLine) {
         return orderLineRepository.save(orderLine);
     }
 
-    // Read OrderLine by ID
+
     public OrderLine findById(Long id) {
         return orderLineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("OrderLine not found"));
     }
 
-    // Read all OrderLines
+
     public List<OrderLine> findAll() {
         return orderLineRepository.findAll();
     }

@@ -47,15 +47,12 @@ public class CategoryService {
 
     public List<CategoryDTO> findAllCategories() {
         List<Category> categories = categoryRepository.findAll();
-        return categories.stream()
-                .map(this::toDTO)
-                .toList();
+        return categories.stream().map(this::toDTO).toList();
     }
 
 
     public CategoryDTO findCategoryById(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
         return toDTO(category);
     }
 

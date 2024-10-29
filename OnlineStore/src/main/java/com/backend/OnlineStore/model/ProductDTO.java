@@ -17,14 +17,9 @@ public class ProductDTO {
     private double price;
     private String productType;
 
-    private Long categoryId;  // Reference to the Category ID
+    private Long categoryId;
 
-    private Long authorId; // Reference to the Author ID
-
-
-
-
-
+    private Long authorId;
 
 
 }

@@ -18,14 +18,17 @@ import java.util.Optional;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+
+    private final ProductService productService;
+    private final CategoryRepository categoryRepository;
+    private final AuthorRepository authorRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private AuthorRepository authorRepository;
+    public ProductController(ProductService productService, CategoryRepository categoryRepository, AuthorRepository authorRepository) {
+        this.productService = productService;
+        this.categoryRepository = categoryRepository;
+        this.authorRepository = authorRepository;
+    }
 
 
     @GetMapping("/search")

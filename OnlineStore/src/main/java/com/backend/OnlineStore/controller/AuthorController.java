@@ -11,8 +11,13 @@ import java.util.Optional;
 @RequestMapping("/api/admin/authors")
 public class AuthorController {
 
+
+    private final AuthorService authorService;
+
     @Autowired
-    private AuthorService authorService;
+    public AuthorController(AuthorService authorService) {
+        this.authorService = authorService;
+    }
 
 
     @PostMapping

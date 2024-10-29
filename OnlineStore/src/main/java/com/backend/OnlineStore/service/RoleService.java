@@ -41,9 +41,11 @@ public class RoleService {
 
     public Optional<RoleDTO> findRoleByName(String roleName) {
         Optional<Role> role = Optional.ofNullable(roleRepository.findByRoleName(roleName)
-                .orElseThrow(() -> new ResourceNotFoundException("Role with roleName " + roleName + " not found")));;
+                .orElseThrow(() -> new ResourceNotFoundException("Role with roleName " + roleName + " not found")));
+        ;
 
         return role.map(this::toDTO);
 
-    }}
+    }
+}
 

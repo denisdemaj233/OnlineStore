@@ -15,8 +15,13 @@ import java.util.Optional;
 @RequestMapping("/api/admin/categories")
 public class CategoryController {
 
+
+    private final CategoryService categoryService;
+
     @Autowired
-    private CategoryService categoryService;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
 
     @GetMapping

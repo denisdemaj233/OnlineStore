@@ -27,7 +27,7 @@ public class ProductService {
 
     }
 
-    // Metoda për të konvertuar Product në ProductDTO
+
     public ProductDTO toDTO(Product product) {
         if (product == null) {
             return null;
@@ -41,13 +41,12 @@ public class ProductService {
                 product.getDescription(),
                 (double) product.getAvailability(),
                 product.getPrice(),
-                product.getProductType().name(), // Kthehet si string
+                product.getProductType().name(),
                 categoryId,
                 authorId
         );
     }
 
-    // Metoda për të konvertuar ProductDTO në Product
     public Product toEntity(ProductDTO productDTO, Category category, Author author) {
         if (productDTO == null) {
             return null;
@@ -58,9 +57,8 @@ public class ProductService {
         product.setDescription(productDTO.getDescription());
         product.setAvailability((int) productDTO.getAvailability());
         product.setPrice(productDTO.getPrice());
-        product.setProductType(ProductType.valueOf(productDTO.getProductType())); // Konvertohet në enum
+        product.setProductType(ProductType.valueOf(productDTO.getProductType()));
 
-        // Shto kategorinë dhe autorin vetëm nëse nuk janë null
         if (category != null) {
             product.setCategory(category);
         }

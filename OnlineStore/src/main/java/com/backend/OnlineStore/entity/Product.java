@@ -1,4 +1,5 @@
 package com.backend.OnlineStore.entity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,7 +36,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
-
 
 
 }

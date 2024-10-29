@@ -29,8 +29,7 @@ public class UserService {
         }
 
 
-
-        return new UserDTO(user.getEmail(),user.getPassword(), user.getCity(), user.getZipCode(),user.getRole().getId());
+        return new UserDTO(user.getEmail(), user.getPassword(), user.getCity(), user.getZipCode(), user.getRole().getId());
     }
 
 
@@ -46,7 +45,6 @@ public class UserService {
         user.setPassword(userDTO.getPassword());
         return user;
     }
-
 
 
     public UserDTO registerUser(final UserDTO userDTO) {
