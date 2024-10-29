@@ -5,7 +5,7 @@ import com.backend.OnlineStore.model.CartDTO;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
-public abstract class CartMapper implements AbstractMapper<CartDTO, Cart>{
+public interface CartMapper extends AbstractMapper<CartDTO, Cart>{
 
 
 }

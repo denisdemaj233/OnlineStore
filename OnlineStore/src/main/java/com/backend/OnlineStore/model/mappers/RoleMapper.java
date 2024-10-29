@@ -5,6 +5,6 @@ import com.backend.OnlineStore.model.RoleDTO;
 import org.mapstruct.*;
 
 @Mapper (componentModel = "spring")
-public abstract class RoleMapper implements AbstractMapper<RoleDTO, Role> {
+public interface RoleMapper extends AbstractMapper<RoleDTO, Role> {
 
 }

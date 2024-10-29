@@ -4,8 +4,9 @@ import com.backend.OnlineStore.entity.Author;
 import com.backend.OnlineStore.model.AuthorDTO;
 import org.mapstruct.*;
 
+
 @Mapper(componentModel = "spring")
-public abstract class AuthorMapper implements AbstractMapper<AuthorDTO, Author>{
+public interface AuthorMapper extends AbstractMapper<AuthorDTO,Author>{
 
 }
 

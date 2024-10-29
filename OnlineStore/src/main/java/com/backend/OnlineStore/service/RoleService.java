@@ -6,6 +6,7 @@ import com.backend.OnlineStore.model.RoleDTO;
 import com.backend.OnlineStore.model.mappers.RoleMapper;
 import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.RoleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,6 +18,7 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
 
+    @Autowired
     public RoleService(RoleRepository roleRepository, UserMapper userMapper, RoleMapper roleMapper) {
         this.roleRepository = roleRepository;
         this.roleMapper = roleMapper;

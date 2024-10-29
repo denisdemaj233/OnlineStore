@@ -7,6 +7,7 @@ import com.backend.OnlineStore.model.ProductDTO;
 import com.backend.OnlineStore.model.mappers.ProductMapper;
 import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
+    @Autowired
     public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;

@@ -6,6 +6,7 @@ import com.backend.OnlineStore.model.OrderLineDTO;
 import com.backend.OnlineStore.model.mappers.OrderLineMapper;
 import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.OrderLineRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class OrderLineService {
     private final OrderLineRepository orderLineRepository;
     private final OrderLineMapper orderLineMapper;
 
+    @Autowired
     public OrderLineService(OrderLineRepository orderLineRepository,OrderLineMapper orderLineMapper) {
         this.orderLineRepository = orderLineRepository;
         this.orderLineMapper = orderLineMapper;

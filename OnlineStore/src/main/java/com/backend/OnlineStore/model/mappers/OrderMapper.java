@@ -5,6 +5,6 @@ import com.backend.OnlineStore.model.OrderDTO;
 import org.mapstruct.*;
 
 @Mapper (componentModel = "spring")
-public abstract class OrderMapper implements AbstractMapper<OrderDTO, Order> {
+public interface OrderMapper extends AbstractMapper<OrderDTO, Order> {
 
 }

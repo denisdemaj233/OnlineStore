@@ -5,7 +5,7 @@ import com.backend.OnlineStore.model.CategoryDTO;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
-public abstract class CategoryMapper implements AbstractMapper<CategoryDTO, Category>{
+public interface CategoryMapper extends AbstractMapper<CategoryDTO, Category>{
 
 
 }
