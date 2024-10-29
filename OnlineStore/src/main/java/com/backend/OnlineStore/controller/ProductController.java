@@ -1,9 +1,13 @@
 package com.backend.OnlineStore.controller;
 
+import com.backend.OnlineStore.entity.Author;
+import com.backend.OnlineStore.entity.Category;
+import com.backend.OnlineStore.exceptions.InvalidDataException;
 import com.backend.OnlineStore.model.ProductDTO;
+import com.backend.OnlineStore.repository.AuthorRepository;
+import com.backend.OnlineStore.repository.CategoryRepository;
 import com.backend.OnlineStore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +20,12 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private AuthorRepository authorRepository;
 
 
     @GetMapping("/search")
@@ -38,10 +48,22 @@ public class ProductController {
 
 
     @PostMapping("/admin")
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
-        ProductDTO savedProduct = productService.saveProduct(productDTO);
-        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
+
+        Optional<Category> category = categoryRepository.findByName(productDTO.getCategoryName());
+        Author author = authorRepository.findByFirstName(productDTO.getAuthorName());
+
+
+        if (category.isEmpty()) {
+            throw new InvalidDataException("Category not found");
+        }
+        if (author == null) {
+            throw new InvalidDataException("Author not found");
+        }
+
+        return productService.saveProduct(productDTO, category.orElse(null), author);
     }
+
 
 
     @DeleteMapping("/admin/{id}")

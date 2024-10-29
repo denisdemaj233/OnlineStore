@@ -3,31 +3,51 @@ package com.backend.OnlineStore.service;
 import com.backend.OnlineStore.entity.User;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.UserDTO;
-import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
     }
+
+    public UserDTO toDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+        return new UserDTO(user.getEmail(), user.getCity(), user.getZipCode());
+    }
+
+
+    public User toEntity(UserDTO userDTO) {
+        if (userDTO == null) {
+            return null;
+        }
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setCity(userDTO.getCity());
+        user.setZipCode(userDTO.getZipCode());
+        return user;
+    }
+
 
 
     public UserDTO registerUser(final UserDTO userDTO) {
 
-        return userMapper.toDTO(userRepository.save(userMapper.toEntity(userDTO)));
+        return toDTO(userRepository.save(toEntity(userDTO)));
     }
 
     public UserDTO findUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
 
-        return userMapper.toDTO(user);
+        return toDTO(user);
     }
 
 
@@ -37,8 +57,8 @@ public class UserService {
 
 
     public UserDTO updateUser(UserDTO userDTO) {
-        User user = userRepository.save(userMapper.toEntity(userDTO));
-        return userMapper.toDTO(user);
+        User user = userRepository.save(toEntity(userDTO));
+        return toDTO(user);
     }
 
 
@@ -46,7 +66,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
 
-        return userMapper.toDTO(user);
+        return toDTO(user);
     }
 
 

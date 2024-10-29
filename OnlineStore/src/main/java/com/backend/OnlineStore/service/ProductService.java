@@ -1,12 +1,14 @@
 package com.backend.OnlineStore.service;
 
+import com.backend.OnlineStore.entity.Author;
+import com.backend.OnlineStore.entity.Category;
 import com.backend.OnlineStore.entity.Product;
+import com.backend.OnlineStore.entity.ProductType;
 import com.backend.OnlineStore.exceptions.InvalidDataException;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.ProductDTO;
-import com.backend.OnlineStore.model.mappers.ProductMapper;
-import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,21 +19,67 @@ public class ProductService {
 
 
     private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.productMapper = productMapper;
+
+    }
+
+    // Metoda për të konvertuar Product në ProductDTO
+    public ProductDTO toDTO(Product product) {
+        if (product == null) {
+            return null;
+        }
+
+        String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
+        String authorName = product.getAuthor() != null ? product.getAuthor().getFirstName() : null;
+
+        return new ProductDTO(
+                product.getTitle(),
+                product.getDescription(),
+                (double) product.getAvailability(),
+                product.getPrice(),
+                product.getProductType().name(), // Kthehet si string
+                categoryName,
+                authorName
+        );
+    }
+
+    // Metoda për të konvertuar ProductDTO në Product
+    public Product toEntity(ProductDTO productDTO, Category category, Author author) {
+        if (productDTO == null) {
+            return null;
+        }
+
+        Product product = new Product();
+        product.setTitle(productDTO.getTitle());
+        product.setDescription(productDTO.getDescription());
+        product.setAvailability((int) productDTO.getAvailability());
+        product.setPrice(productDTO.getPrice());
+        product.setProductType(ProductType.valueOf(productDTO.getProductType())); // Konvertohet në enum
+
+        // Shto kategorinë dhe autorin vetëm nëse nuk janë null
+        if (category != null) {
+            product.setCategory(category);
+        }
+        if (author != null) {
+            product.setAuthor(author);
+        }
+
+        return product;
     }
 
     public ProductDTO findProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
-        return productMapper.toDTO(product);
+        return toDTO(product);
     }
 
 
-    public ProductDTO saveProduct(ProductDTO productDTO) {
+    public ProductDTO saveProduct(ProductDTO productDTO, Category category, Author author) {
+
 
         if (productDTO.getTitle() == null || productDTO.getTitle().isEmpty()) {
             throw new InvalidDataException("Product title is required");
@@ -40,19 +88,18 @@ public class ProductService {
             throw new InvalidDataException("Product price must be positive");
         }
 
+        Product product = toEntity(productDTO, category, author);
 
-
-        Product product = productMapper.toEntity(productDTO);
         Product savedProduct = productRepository.save(product);
 
-        return productMapper.toDTO(savedProduct);
-    }
 
+        return toDTO(savedProduct);
+    }
 
     public Optional<List<ProductDTO>> findProductsByCategory(Long categoryId) {
         return Optional.ofNullable(productRepository.findByCategoryId(categoryId)
                 .map(products -> products.stream()
-                        .map(productMapper::toDTO)
+                        .map(this::toDTO)
                         .toList())
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id " + categoryId + " not found")));
     }
@@ -61,7 +108,7 @@ public class ProductService {
     public Optional<List<ProductDTO>> searchProductsByTitle(String title) {
         return Optional.ofNullable(productRepository.findByTitleContaining(title)
                 .map(products -> products.stream()
-                        .map(productMapper::toDTO)
+                        .map(this::toDTO)
                         .toList())
                 .orElseThrow(() -> new ResourceNotFoundException("Product with title " + title + " not found")));
     }

@@ -1,10 +1,14 @@
 package com.backend.OnlineStore.model;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartDTO {
     private List<OrderLineDTO> orderLines;
 
