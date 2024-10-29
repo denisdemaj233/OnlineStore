@@ -1,6 +1,7 @@
 package com.backend.OnlineStore.service;
 
 import com.backend.OnlineStore.entity.Author;
+import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.AuthorDTO;
 import com.backend.OnlineStore.model.mappers.AuthorMapper;
 import com.backend.OnlineStore.repository.AuthorRepository;
@@ -14,28 +15,32 @@ import java.util.Optional;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository, AuthorMapper authorMapper) {
         this.authorRepository = authorRepository;
+        this.authorMapper = authorMapper;
     }
 
     public AuthorDTO saveAuthor(AuthorDTO authorDTO) {
 
-        Author author = AuthorMapper.INSTANCE.authorDTOToAuthor(authorDTO);
+        Author author = authorMapper.toEntity(authorDTO);
         Author savedAuthor = authorRepository.save(author);
-        return AuthorMapper.INSTANCE.authorToAuthorDTO(savedAuthor);
+        return authorMapper.toDTO(savedAuthor);
     }
 
 
     public Optional<AuthorDTO> findAuthorById(Long id) {
-        return authorRepository.findById(id)
-                .map(AuthorMapper.INSTANCE::authorToAuthorDTO);
+        return Optional.ofNullable(authorRepository.findById(id)
+                .map(authorMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found")));
     }
 
 
     public Optional<AuthorDTO> findAuthorByName(String firstName, String lastName) {
-        return authorRepository.findByFirstNameAndLastName(firstName, lastName)
-                .map(AuthorMapper.INSTANCE::authorToAuthorDTO);
+        return Optional.ofNullable(authorRepository.findByFirstNameAndLastName(firstName, lastName)
+                .map(authorMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found")));
     }
 
     public void deleteAuthor(Long id) {

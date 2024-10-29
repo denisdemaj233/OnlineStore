@@ -7,30 +7,27 @@ import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
+    private final UserMapper userMapper;
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
 
     public UserDTO registerUser(final UserDTO userDTO) {
 
-        User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
-        User savedUser = userRepository.save(user);
-        return UserMapper.INSTANCE.userToUserDTO(savedUser);
+        return userMapper.toDTO(userRepository.save(userMapper.toEntity(userDTO)));
     }
 
     public UserDTO findUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
 
-        return UserMapper.INSTANCE.userToUserDTO(user);
+        return userMapper.toDTO(user);
     }
 
 
@@ -40,8 +37,8 @@ public class UserService {
 
 
     public UserDTO updateUser(UserDTO userDTO) {
-        User user = userRepository.save(UserMapper.INSTANCE.userDTOToUser(userDTO));
-        return UserMapper.INSTANCE.userToUserDTO(user);
+        User user = userRepository.save(userMapper.toEntity(userDTO));
+        return userMapper.toDTO(user);
     }
 
 
@@ -49,7 +46,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
 
-        return UserMapper.INSTANCE.userToUserDTO(user);
+        return userMapper.toDTO(user);
     }
 
 

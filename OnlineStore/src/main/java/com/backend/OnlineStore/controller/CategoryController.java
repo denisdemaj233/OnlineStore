@@ -24,10 +24,9 @@ public class CategoryController {
         return categoryService.findAllCategories();
     }
 
-    @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO savedCategory = categoryService.saveCategory(categoryDTO);
-        return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
+    @PostMapping("/register")
+    public CategoryDTO createCategory(@RequestBody CategoryDTO categoryDTO){
+        return categoryService.saveCategory(categoryDTO);
     }
 
     @GetMapping("/{id}")

@@ -5,11 +5,10 @@ import com.backend.OnlineStore.exceptions.InvalidDataException;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.ProductDTO;
 import com.backend.OnlineStore.model.mappers.ProductMapper;
+import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +17,17 @@ public class ProductService {
 
 
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     public ProductDTO findProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
-        return ProductMapper.INSTANCE.productToProductDTO(product);
+        return productMapper.toDTO(product);
     }
 
 
@@ -40,31 +41,29 @@ public class ProductService {
         }
 
 
-        Product product = ProductMapper.INSTANCE.productDTOToProduct(productDTO);
+
+        Product product = productMapper.toEntity(productDTO);
         Product savedProduct = productRepository.save(product);
 
-
-        return ProductMapper.INSTANCE.productToProductDTO(savedProduct);
+        return productMapper.toDTO(savedProduct);
     }
 
-    public Page<ProductDTO> findAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable)
-                .map(ProductMapper.INSTANCE::productToProductDTO);
-    }
 
     public Optional<List<ProductDTO>> findProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId)
+        return Optional.ofNullable(productRepository.findByCategoryId(categoryId)
                 .map(products -> products.stream()
-                        .map(ProductMapper.INSTANCE::productToProductDTO)
-                        .toList());
+                        .map(productMapper::toDTO)
+                        .toList())
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + categoryId + " not found")));
     }
 
 
     public Optional<List<ProductDTO>> searchProductsByTitle(String title) {
-        return productRepository.findByTitleContaining(title)
+        return Optional.ofNullable(productRepository.findByTitleContaining(title)
                 .map(products -> products.stream()
-                        .map(ProductMapper.INSTANCE::productToProductDTO)
-                        .toList());
+                        .map(productMapper::toDTO)
+                        .toList())
+                .orElseThrow(() -> new ResourceNotFoundException("Product with title " + title + " not found")));
     }
 
 

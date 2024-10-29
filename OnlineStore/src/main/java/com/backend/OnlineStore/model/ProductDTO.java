@@ -7,7 +7,8 @@ public class ProductDTO {
 
     private String title;
     private String description;
-    private String thumbnailUrl;
+
+    private double availability;
     private double price;
     private String productType;
 

@@ -8,6 +8,7 @@ import com.backend.OnlineStore.exceptions.OrderException;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.OrderDTO;
 import com.backend.OnlineStore.model.mappers.OrderMapper;
+import com.backend.OnlineStore.model.mappers.UserMapper;
 import com.backend.OnlineStore.repository.OrderRepository;
 import com.backend.OnlineStore.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,19 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final OrderMapper orderMapper;
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository) {
+
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+
+        this.orderMapper = orderMapper;
     }
 
     public OrderDTO createOrder(OrderDTO orderDTO) {
-        Order order = OrderMapper.INSTANCE.orderDTOToOrder(orderDTO);
+
+        Order order = orderMapper.toEntity(orderDTO);
 
         for (OrderLine line : order.getOrderLines()) {
             Product product = productRepository.findById(line.getProduct().getId())
@@ -38,27 +44,29 @@ public class OrderService {
 
 
         Order savedOrder = orderRepository.save(order);
-
-        return OrderMapper.INSTANCE.orderToOrderDTO(savedOrder);
+        return orderMapper.toDTO(savedOrder);
     }
 
     public Optional<List<OrderDTO>> findOrdersByUser(Long userId) {
-        return orderRepository.findByUserId(userId)
+        return Optional.ofNullable(orderRepository.findByUserId(userId)
                 .map(orders -> orders.stream()
-                        .map(OrderMapper.INSTANCE::orderToOrderDTO)
-                        .toList());
+                        .map(orderMapper::toDTO)
+                        .toList())
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found")));
     }
 
     public Optional<List<OrderDTO>> findOrdersByStatus(OrderStatus status) {
-        return orderRepository.findByStatus(status)
+        return Optional.ofNullable(orderRepository.findByStatus(status)
                 .map(orders -> orders.stream()
-                        .map(OrderMapper.INSTANCE::orderToOrderDTO)
-                        .toList());
+                        .map(orderMapper::toDTO)
+                        .toList())
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found")));
     }
 
     public Optional<OrderDTO> findOrderById(Long id) {
-        return orderRepository.findById(id)
-                .map(OrderMapper.INSTANCE::orderToOrderDTO);
+        return Optional.ofNullable(orderRepository.findById(id)
+                .map(orderMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found")));
     }
 
 

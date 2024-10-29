@@ -14,27 +14,25 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
     }
 
 
-    public CategoryDTO saveCategory(CategoryDTO categoryDTO) {
-        if (categoryDTO.getName() == null || categoryDTO.getName().isEmpty()) {
-            throw new InvalidDataException("Category name is required");
-        }
+    public CategoryDTO saveCategory(final CategoryDTO categoryDTO) {
 
-
-        Category category = CategoryMapper.INSTANCE.categoryDTOToCategory(categoryDTO);
-        Category savedCategory = categoryRepository.save(category);
-        return CategoryMapper.INSTANCE.categoryToCategoryDTO(savedCategory);
+        Category entity = categoryMapper.toEntity(categoryDTO);
+        Category save = categoryRepository.save(entity);
+        return categoryMapper.toDTO(save);
     }
 
     public List<CategoryDTO> findAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
-                .map(CategoryMapper.INSTANCE::categoryToCategoryDTO)
+                .map(categoryMapper::toDTO)
                 .toList();
     }
 
@@ -42,7 +40,7 @@ public class CategoryService {
     public CategoryDTO findCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
-        return CategoryMapper.INSTANCE.categoryToCategoryDTO(category);
+        return categoryMapper.toDTO(category);
     }
 
 
