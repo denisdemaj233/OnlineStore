@@ -1,9 +1,11 @@
 package com.backend.OnlineStore.model;
 
+import com.backend.OnlineStore.entity.OrderStatus;
 import lombok.*;
 
 import java.util.List;
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @Getter
@@ -12,11 +14,12 @@ import java.util.Date;
 @AllArgsConstructor
 public class OrderDTO {
 
-    private String userName;
+
+    private Long userId;
     private double totalCost;
     private String deliveryAddress;
     private Date orderDate;
-    private String status;
+    private OrderStatus status;
     private List<OrderLineDTO> orderLines;
 
 

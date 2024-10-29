@@ -1,34 +1,31 @@
 package com.backend.OnlineStore.service;
 
-import com.backend.OnlineStore.entity.*;
-import com.backend.OnlineStore.exceptions.OrderException;
+import com.backend.OnlineStore.entity.Order;
+import com.backend.OnlineStore.entity.OrderStatus;
+import com.backend.OnlineStore.entity.User;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.OrderDTO;
 import com.backend.OnlineStore.model.OrderLineDTO;
 import com.backend.OnlineStore.repository.OrderRepository;
-import com.backend.OnlineStore.repository.ProductRepository;
+import com.backend.OnlineStore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
     private final OrderLineService orderLineService;
 
-
     @Autowired
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, OrderLineService orderLineService) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository, OrderLineService orderLineService) {
         this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-
-
+        this.userRepository = userRepository;
         this.orderLineService = orderLineService;
     }
 
@@ -37,89 +34,69 @@ public class OrderService {
             return null;
         }
 
-        List<OrderLineDTO> orderLineDTOs = order.getOrderLines()
-                .stream()
-                .map(orderLineService::toOrderLineDto)
-                .collect(Collectors.toList());
+
 
         return new OrderDTO(
-                order.getUser() != null ? order.getUser().getEmail() : null, // ose merrni emrin e përdoruesit
+                order.getUser() != null ? order.getUser().getId() : null,
                 order.getTotalCost(),
                 order.getDeliveryAddress(),
                 order.getOrderDate(),
-                order.getStatus().name(),
-                orderLineDTOs
+                order.getStatus(),
+                orderLineService.toDTOList(order.getOrderLines())
         );
     }
 
-    // Metoda për të konvertuar OrderDTO në Order
-    public Order toEntity(OrderDTO orderDTO, User user) {
-        if (orderDTO == null) {
+    // Convert OrderModel to Order entity
+    public Order toEntity(OrderDTO orderModel) {
+        if (orderModel == null) {
             return null;
         }
 
+        User user = userRepository.findById(orderModel.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         Order order = new Order();
-        order.setUser(user); // Shtoni përdoruesin
-        order.setTotalCost(orderDTO.getTotalCost());
-        order.setDeliveryAddress(orderDTO.getDeliveryAddress());
-        order.setOrderDate(orderDTO.getOrderDate());
-        order.setStatus(OrderStatus.valueOf(orderDTO.getStatus())); // Konvertohet në enum
+        order.setUser(user);
+        order.setTotalCost(orderModel.getTotalCost());
+        order.setDeliveryAddress(orderModel.getDeliveryAddress());
+        order.setOrderDate(orderModel.getOrderDate());
+        order.setStatus(orderModel.getStatus());
+        order.setOrderLines(orderLineService.toEntityList(orderModel.getOrderLines()));
 
-        Set<OrderLine> orderLines = orderDTO.getOrderLines()
-                .stream()
-                .map(orderLineService::toOrderLineEntity)
-                .collect(Collectors.toSet());
-
-        order.setOrderLines(orderLines);
         return order;
     }
 
 
-    public OrderDTO createOrder(OrderDTO orderDTO, User user) {
-        // Konvertoni OrderDTO në Order dhe lidheni me përdoruesin
-        Order order = toEntity(orderDTO, user);
 
-        for (OrderLineDTO lineDTO : orderDTO.getOrderLines()) {
-            Product product = productRepository.findById(lineDTO.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + lineDTO.getProductId()));
-
-            OrderLine orderLine = new OrderLine();
-            orderLine.setProduct(product);
-            orderLine.setQuantity(lineDTO.getQuantity());
-            orderLine.setProductPrice(product.getPrice()); // ose çmimi që keni
-
-            order.setOrderLines((Set<OrderLine>) orderLine);
-        }
-
-        // Ruajmë porosinë në bazën e të dhënave
-        Order savedOrder = orderRepository.save(order);
-        return toDTO(savedOrder);
+    // Create Order
+    public Order save(Order order) {
+        return orderRepository.save(order);
     }
 
-    public Optional<List<OrderDTO>> findOrdersByUser(Long userId) {
-        return Optional.ofNullable(orderRepository.findByUserId(userId)
-                .map(orders -> orders.stream()
-                        .map(this::toDTO)
-                        .toList())
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found")));
+    // Read Order by ID
+    public Order findById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
-    public Optional<List<OrderDTO>> findOrdersByStatus(OrderStatus status) {
-        return Optional.ofNullable(orderRepository.findByStatus(status)
-                .map(orders -> orders.stream()
-                        .map(this::toDTO)
-                        .toList())
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found")));
+    // Read all Orders
+    public List<Order> findAll() {
+        return orderRepository.findAll();
     }
 
-    public Optional<OrderDTO> findOrderById(Long id) {
-        return Optional.ofNullable(orderRepository.findById(id)
-                .map(this::toDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found")));
+    // Update Order
+    public Order update(Long id, OrderDTO orderModel) {
+        Order existingOrder = findById(id);
+        existingOrder.setTotalCost(orderModel.getTotalCost());
+        existingOrder.setDeliveryAddress(orderModel.getDeliveryAddress());
+        existingOrder.setOrderDate(orderModel.getOrderDate());
+        existingOrder.setStatus(orderModel.getStatus());
+        return orderRepository.save(existingOrder);
     }
 
-
-    public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+    // Delete Order
+    public void delete(Long id) {
+        Order existingOrder = findById(id);
+        orderRepository.delete(existingOrder);
     }
 }

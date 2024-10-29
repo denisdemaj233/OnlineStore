@@ -33,8 +33,8 @@ public class ProductService {
             return null;
         }
 
-        String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
-        String authorName = product.getAuthor() != null ? product.getAuthor().getFirstName() : null;
+        Long categoryId = product.getCategory() != null ? product.getCategory().getId() : null;
+        Long authorId = product.getAuthor() != null ? product.getAuthor().getId() : null;
 
         return new ProductDTO(
                 product.getTitle(),
@@ -42,8 +42,8 @@ public class ProductService {
                 (double) product.getAvailability(),
                 product.getPrice(),
                 product.getProductType().name(), // Kthehet si string
-                categoryName,
-                authorName
+                categoryId,
+                authorId
         );
     }
 

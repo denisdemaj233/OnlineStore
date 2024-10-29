@@ -50,18 +50,18 @@ public class ProductController {
     @PostMapping("/admin")
     public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
 
-        Optional<Category> category = categoryRepository.findByName(productDTO.getCategoryName());
-        Author author = authorRepository.findByFirstName(productDTO.getAuthorName());
+        Optional<Category> category = categoryRepository.findById(productDTO.getCategoryId());
+        Optional<Author> author = authorRepository.findAuthorById(productDTO.getAuthorId());
 
 
         if (category.isEmpty()) {
             throw new InvalidDataException("Category not found");
         }
-        if (author == null) {
+        if (author.isEmpty()) {
             throw new InvalidDataException("Author not found");
         }
 
-        return productService.saveProduct(productDTO, category.orElse(null), author);
+        return productService.saveProduct(productDTO, category.orElse(null), author.orElse(null));
     }
 
 

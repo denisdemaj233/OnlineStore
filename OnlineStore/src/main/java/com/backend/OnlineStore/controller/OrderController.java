@@ -1,53 +1,58 @@
 package com.backend.OnlineStore.controller;
+
 import com.backend.OnlineStore.entity.Order;
-import com.backend.OnlineStore.entity.User;
-import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.OrderDTO;
-import com.backend.OnlineStore.repository.UserRepository;
 import com.backend.OnlineStore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
 
+    private final OrderService orderService;
+
     @Autowired
-    private OrderService orderService;
-    @Autowired
-    private UserRepository userRepository;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
-        User user = userRepository.findByEmail(orderDTO.getUserName())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        // Krijoni porosinë
-        OrderDTO savedOrder = orderService.createOrder(orderDTO, user);
-        return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderModel) {
+        Order order = orderService.toEntity(orderModel);
+        Order savedOrder = orderService.save(order);
+        return ResponseEntity.ok(orderService.toDTO(savedOrder));
     }
-
-
-    @GetMapping("/user/{userId}")
-    public Optional<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
-        return orderService.findOrdersByUser(userId);
-    }
-
 
     @GetMapping("/{id}")
-    public Optional<OrderDTO> getOrderById(@PathVariable Long id) {
-        return orderService.findOrderById(id);
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+        Order order = orderService.findById(id);
+        return ResponseEntity.ok(orderService.toDTO(order));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        List<Order> orders = orderService.findAll();
+        List<OrderDTO> orderModels = orders.stream()
+                .map(orderService::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(orderModels);
     }
 
 
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id, @RequestBody OrderDTO orderModel) {
+        Order updatedOrder = orderService.update(id, orderModel);
+        return ResponseEntity.ok(orderService.toDTO(updatedOrder));
+    }
+
     @DeleteMapping("/{id}")
-    public void deleteOrder(@PathVariable Long id) {
-        orderService.deleteOrder(id);
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+        orderService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ProductDTO {
 
+
     private String title;
     private String description;
 
@@ -16,9 +17,14 @@ public class ProductDTO {
     private double price;
     private String productType;
 
-    private String categoryName;
+    private Long categoryId;  // Reference to the Category ID
 
-    private String authorName;
+    private Long authorId; // Reference to the Author ID
+
+
+
+
+
 
 
 }

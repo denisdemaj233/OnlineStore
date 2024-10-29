@@ -10,9 +10,9 @@ import lombok.*;
 public class OrderLineDTO {
 
 
-    private String productName;
+    private Long orderId;
+    private Long productId;
     private int quantity;
-    private double productPrice;
 
 
 }

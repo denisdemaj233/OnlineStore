@@ -1,27 +1,36 @@
 package com.backend.OnlineStore.service;
 
+import com.backend.OnlineStore.entity.Role;
 import com.backend.OnlineStore.entity.User;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.UserDTO;
+import com.backend.OnlineStore.repository.RoleRepository;
 import com.backend.OnlineStore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public UserDTO toDTO(User user) {
         if (user == null) {
             return null;
         }
-        return new UserDTO(user.getEmail(), user.getCity(), user.getZipCode());
+
+
+
+        return new UserDTO(user.getEmail(),user.getPassword(), user.getCity(), user.getZipCode(),user.getRole().getId());
     }
 
 
@@ -33,6 +42,8 @@ public class UserService {
         user.setEmail(userDTO.getEmail());
         user.setCity(userDTO.getCity());
         user.setZipCode(userDTO.getZipCode());
+        user.setRole(roleRepository.findRoleById(userDTO.getRoli()));
+        user.setPassword(userDTO.getPassword());
         return user;
     }
 
@@ -80,5 +91,9 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
 
         return password.matches(user.getPassword());
+    }
+
+    public Optional<User> findById(Long userId) {
+        return userRepository.findById(userId);
     }
 }

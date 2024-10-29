@@ -1,68 +1,103 @@
 package com.backend.OnlineStore.service;
 
+import com.backend.OnlineStore.entity.Order;
 import com.backend.OnlineStore.entity.OrderLine;
+import com.backend.OnlineStore.entity.Product;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.OrderLineDTO;
 import com.backend.OnlineStore.repository.OrderLineRepository;
+import com.backend.OnlineStore.repository.OrderRepository;
+import com.backend.OnlineStore.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderLineService {
 
     private final OrderLineRepository orderLineRepository;
-
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public OrderLineService(OrderLineRepository orderLineRepository) {
+    public OrderLineService(OrderLineRepository orderLineRepository,
+                            OrderRepository orderRepository,
+                            ProductRepository productRepository) {
         this.orderLineRepository = orderLineRepository;
-
-
+        this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
     }
-    public OrderLineDTO toOrderLineDto(OrderLine orderLine) {
+
+    // Convert OrderLine to OrderLineModel
+    public OrderLineDTO toDTO(OrderLine orderLine) {
         if (orderLine == null) {
             return null;
         }
 
         return new OrderLineDTO(
-                orderLine.getOrder().getId(),
-                orderLine.getProduct() != null ? orderLine.getProduct().getTitle() : null,
-                orderLine.getQuantity(),
-                orderLine.getProductPrice()
+                orderLine.getOrder() != null ? orderLine.getOrder().getId() : null,
+                orderLine.getProduct() != null ? orderLine.getProduct().getId() : null,
+                orderLine.getQuantity()
         );
     }
 
-    // Metoda për të konvertuar OrderLineDTO në OrderLine
-    public OrderLine toOrderLineEntity(OrderLineDTO orderLineDTO) {
-        if (orderLineDTO == null) {
+    // Convert OrderLineModel to OrderLine entity
+    public OrderLine toEntity(OrderLineDTO orderLineModel) {
+        if (orderLineModel == null) {
             return null;
         }
+
+
+        Product product = productRepository.findById(orderLineModel.getProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
         OrderLine orderLine = new OrderLine();
-        orderLine.setQuantity(orderLineDTO.getQuantity());
-        orderLine.setProductPrice(orderLineDTO.getProductPrice());
+
+        orderLine.setProduct(product);
+        orderLine.setQuantity(orderLineModel.getQuantity());
+        orderLine.setProductPrice(product.getPrice());
+        orderLine.setOrder(orderRepository.getOne(orderLineModel.getOrderId()));
+
+
         return orderLine;
     }
-    public OrderLineDTO saveOrderLine(OrderLineDTO orderLineDTO) {
 
-        OrderLine orderLine = toOrderLineEntity(orderLineDTO);
-        OrderLine savedOrderLine = orderLineRepository.save(orderLine);
-        return toOrderLineDto(savedOrderLine);
+    public List<OrderLineDTO> toDTOList(List<OrderLine> orderLines) {
+        if (orderLines == null) {
+            return null;
+        }
+
+        return orderLines.stream()
+                .map(this::toDTO) // Përdor metodën e konvertimit të individëve
+                .collect(Collectors.toList());
     }
 
-    public Optional<List<OrderLineDTO>> findOrderLinesByOrder(Long orderId) {
-        return Optional.ofNullable(orderLineRepository.findByOrderId(orderId)
-                .map(orderLines -> orderLines.stream()
-                        .map(this::toOrderLineDto)
-                        .toList())
-                .orElseThrow(() -> new ResourceNotFoundException("ORDELINES with id " + orderId + " not found")));
+    public List<OrderLine> toEntityList(List<OrderLineDTO> orderLineDTOs) {
+        if (orderLineDTOs == null) {
+            return null;
+        }
+
+        return orderLineDTOs.stream()
+                .map(this::toEntity) // Përdor metodën e konvertimit të individëve
+                .collect(Collectors.toList());
     }
 
-
-    public void deleteOrderLine(Long id) {
-        orderLineRepository.deleteById(id);
+    // Create OrderLine
+    public OrderLine save(OrderLine orderLine) {
+        return orderLineRepository.save(orderLine);
     }
+
+    // Read OrderLine by ID
+    public OrderLine findById(Long id) {
+        return orderLineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("OrderLine not found"));
+    }
+
+    // Read all OrderLines
+    public List<OrderLine> findAll() {
+        return orderLineRepository.findAll();
+    }
+
 }
