@@ -15,3 +15,7 @@ spring:
     resources:
       chain:
         enabled: false
+  security:
+    user:
+      name: user
+      password: "{noop}password"

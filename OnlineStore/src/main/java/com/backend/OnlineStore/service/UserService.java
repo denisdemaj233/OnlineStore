@@ -7,6 +7,7 @@ import com.backend.OnlineStore.model.UserDTO;
 import com.backend.OnlineStore.repository.RoleRepository;
 import com.backend.OnlineStore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,11 +17,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDTO toDTO(User user) {
@@ -42,7 +45,7 @@ public class UserService {
         user.setCity(userDTO.getCity());
         user.setZipCode(userDTO.getZipCode());
         user.setRole(roleRepository.findRoleById(userDTO.getRoli()));
-        user.setPassword(userDTO.getPassword());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         return user;
     }
 
@@ -88,7 +91,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
 
-        return password.matches(user.getPassword());
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     public Optional<User> findById(Long userId) {

@@ -1,15 +1,12 @@
 package com.backend.OnlineStore.controller;
 
-import com.backend.OnlineStore.entity.Category;
 import com.backend.OnlineStore.model.CategoryDTO;
 import com.backend.OnlineStore.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin/categories")
