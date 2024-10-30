@@ -1,7 +1,6 @@
 package com.backend.OnlineStore.security;
 
 import com.backend.OnlineStore.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +32,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/api/user/register").permitAll() // Allow registration endpoint without authentication
+                        .requestMatchers("/api/user/login").permitAll()
+                        .requestMatchers("/api/roles").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)

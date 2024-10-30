@@ -1,6 +1,5 @@
 package com.backend.OnlineStore.service;
 
-import com.backend.OnlineStore.entity.Role;
 import com.backend.OnlineStore.entity.User;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.UserDTO;
@@ -87,12 +86,23 @@ public class UserService {
     }
 
 
+//    public boolean authenticate(String email, String password) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+//
+//        return passwordEncoder.matches(password, user.getPassword());
+//    }
+
     public boolean authenticate(String email, String password) {
+        System.out.println("Authenticating user with email: " + email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
 
-        return passwordEncoder.matches(password, user.getPassword());
+        boolean isPasswordMatch = passwordEncoder.matches(password, user.getPassword());
+        System.out.println("Password match: " + isPasswordMatch);
+        return isPasswordMatch;
     }
+
 
     public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
