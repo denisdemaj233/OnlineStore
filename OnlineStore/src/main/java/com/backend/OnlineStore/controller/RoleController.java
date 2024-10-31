@@ -2,7 +2,6 @@ package com.backend.OnlineStore.controller;
 
 import com.backend.OnlineStore.entity.Role;
 import com.backend.OnlineStore.repository.RoleRepository;
-import com.backend.OnlineStore.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

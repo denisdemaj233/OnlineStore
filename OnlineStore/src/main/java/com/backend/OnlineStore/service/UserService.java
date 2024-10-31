@@ -1,6 +1,5 @@
 package com.backend.OnlineStore.service;
 
-import com.backend.OnlineStore.entity.Role;
 import com.backend.OnlineStore.entity.User;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.UserDTO;
