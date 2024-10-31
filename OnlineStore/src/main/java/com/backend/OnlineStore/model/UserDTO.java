@@ -12,11 +12,13 @@ import lombok.*;
 @AllArgsConstructor
 public class UserDTO {
 
+    private Long id;
     private String email;
-    private String password;
+
     private String city;
     private String zipCode;
     private Long roli; // ADMIN/USER
+    private String password;
 
 
 }

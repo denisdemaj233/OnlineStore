@@ -1,14 +1,17 @@
+
 package com.backend.OnlineStore.controller;
 
 import com.backend.OnlineStore.entity.User;
+import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.UserDTO;
+import com.backend.OnlineStore.repository.UserRepository;
 import com.backend.OnlineStore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -16,23 +19,49 @@ public class UserController {
 
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody User user) {
+//
+//        boolean isAuthenticated = userService.authenticate(user.getEmail(), user.getPassword());
+//
+//        if (isAuthenticated) {
+//            return ResponseEntity.ok("Login successful");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+//        }
+//    }
 
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
         boolean isAuthenticated = userService.authenticate(user.getEmail(), user.getPassword());
 
         if (isAuthenticated) {
-            return ResponseEntity.ok("Login successful");
+            User authenticatedUser = userRepository.findByEmail(user.getEmail()).orElseThrow(() ->
+                    new ResourceNotFoundException("User with email " + user.getEmail() + " not found"));
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Login successful");
+            if (authenticatedUser.getRole() != null) {
+                response.put("role", authenticatedUser.getRole().getRoleName());
+            } else {
+                response.put("error", "User role is null");
+            }
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
         }
     }
+
+
+
 
     @PostMapping("/register")
     public UserDTO registerUser(@RequestBody UserDTO userDTO) {
@@ -62,4 +91,10 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
+    @GetMapping("/allUsers")
+    public List<UserDTO> getAllUsers() {
+        return userService.findAllUsers();
+    }
+
 }

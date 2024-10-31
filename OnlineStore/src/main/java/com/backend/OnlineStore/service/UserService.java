@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,12 +19,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     public UserDTO toDTO(User user) {
@@ -31,8 +34,17 @@ public class UserService {
             return null;
         }
 
+        Long roleId=user.getRole()!=null?user.getRole().getId():null;
 
-        return new UserDTO(user.getEmail(), user.getPassword(), user.getCity(), user.getZipCode(), user.getRole().getId());
+
+        return new UserDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getCity(),
+                user.getZipCode(),
+                roleId,
+                user.getPassword()
+        );
     }
 
 
@@ -87,14 +99,30 @@ public class UserService {
     }
 
 
+//    public boolean authenticate(String email, String password) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+//
+//        return passwordEncoder.matches(password, user.getPassword());
+//    }
+
     public boolean authenticate(String email, String password) {
+        System.out.println("Authenticating user with email: " + email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
 
-        return passwordEncoder.matches(password, user.getPassword());
+        boolean isPasswordMatch = passwordEncoder.matches(password, user.getPassword());
+        System.out.println("Password match: " + isPasswordMatch);
+        return isPasswordMatch;
     }
+
 
     public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    public List<UserDTO> findAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(this::toDTO).toList();
     }
 }

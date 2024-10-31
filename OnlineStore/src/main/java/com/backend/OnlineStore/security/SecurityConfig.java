@@ -33,6 +33,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/api/user/register").permitAll() // Allow registration endpoint without authentication
+                        .requestMatchers("/api/user/login").permitAll()
+                        .requestMatchers("/api/user/allUsers").permitAll()
+                        .requestMatchers("/api/user/profile").permitAll()
+                        .requestMatchers("/api/roles").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)

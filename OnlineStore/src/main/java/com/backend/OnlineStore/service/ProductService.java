@@ -37,6 +37,7 @@ public class ProductService {
         Long authorId = product.getAuthor() != null ? product.getAuthor().getId() : null;
 
         return new ProductDTO(
+
                 product.getTitle(),
                 product.getDescription(),
                 (double) product.getAvailability(),
