@@ -5,7 +5,9 @@ import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.CategoryDTO;
 import com.backend.OnlineStore.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -55,7 +57,15 @@ public class CategoryService {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
         return toDTO(category);
     }
-
+    public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
+        return categoryRepository.findById(id)
+                .map(existingCategory -> {
+                    existingCategory.setName(categoryDTO.getName());
+                    CategoryDTO updatedCategory = toDTO(categoryRepository.save(existingCategory));
+                    return updatedCategory;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+    }
 
     public void deleteCategory(Long id) {
         categoryRepository.deleteById(id);

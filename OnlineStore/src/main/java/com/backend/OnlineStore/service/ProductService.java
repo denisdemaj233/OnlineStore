@@ -112,6 +112,13 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product with title " + title + " not found")));
     }
 
+    public List<ProductDTO> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);

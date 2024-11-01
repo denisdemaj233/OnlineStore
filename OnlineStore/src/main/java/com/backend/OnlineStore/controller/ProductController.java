@@ -43,11 +43,18 @@ public class ProductController {
         return ResponseEntity.ok(productDTO);
     }
 
+    @GetMapping
+    public List<ProductDTO> getAllProducts() {
+        return productService.getAllProducts();
+    }
+
+
 
     @GetMapping("/category/{categoryId}")
     public Optional<List<ProductDTO>> getProductsByCategory(@PathVariable Long categoryId) {
         return productService.findProductsByCategory(categoryId);
     }
+
 
 
     @PostMapping("/admin")
