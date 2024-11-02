@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class AuthorDTO {
 
+    private Long id;
     private String firstName;
     private String lastName;
 

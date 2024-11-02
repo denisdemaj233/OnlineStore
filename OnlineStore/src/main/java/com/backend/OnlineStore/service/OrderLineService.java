@@ -37,6 +37,7 @@ public class OrderLineService {
         }
 
         return new OrderLineDTO(
+                orderLine.getId(),
                 orderLine.getOrder() != null ? orderLine.getOrder().getId() : null,
                 orderLine.getProduct() != null ? orderLine.getProduct().getId() : null,
                 orderLine.getQuantity()
@@ -55,6 +56,7 @@ public class OrderLineService {
         OrderLine orderLine = new OrderLine();
 
         orderLine.setProduct(product);
+        orderLine.setId(orderLineModel.getId());
         orderLine.setQuantity(orderLineModel.getQuantity());
         orderLine.setProductPrice(product.getPrice());
         orderLine.setOrder(orderRepository.getOne(orderLineModel.getOrderId()));

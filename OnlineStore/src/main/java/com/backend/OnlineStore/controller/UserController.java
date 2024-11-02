@@ -1,16 +1,21 @@
 
 package com.backend.OnlineStore.controller;
 
+import com.backend.OnlineStore.entity.Role;
 import com.backend.OnlineStore.entity.User;
 import com.backend.OnlineStore.exceptions.ResourceNotFoundException;
 import com.backend.OnlineStore.model.UserDTO;
+import com.backend.OnlineStore.repository.RoleRepository;
 import com.backend.OnlineStore.repository.UserRepository;
 import com.backend.OnlineStore.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.relation.RoleNotFoundException;
 import java.util.*;
 
 @RestController
@@ -20,24 +25,16 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<String> login(@RequestBody User user) {
-//
-//        boolean isAuthenticated = userService.authenticate(user.getEmail(), user.getPassword());
-//
-//        if (isAuthenticated) {
-//            return ResponseEntity.ok("Login successful");
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-//        }
-//    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
@@ -75,11 +72,6 @@ public class UserController {
     }
 
 
-    @PutMapping("/profile")
-    public UserDTO updateUser(@RequestBody UserDTO userDTO) {
-        return userService.updateUser(userDTO);
-    }
-
 
     @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable Long id) {
@@ -95,6 +87,32 @@ public class UserController {
     @GetMapping("/allUsers")
     public List<UserDTO> getAllUsers() {
         return userService.findAllUsers();
+    }
+
+    @PutMapping("/profile")
+    public UserDTO updateUser(UserDTO userDTO) throws RoleNotFoundException {
+
+        Optional<User> optionalUser = userRepository.findById(userDTO.getId());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setEmail(userDTO.getEmail());
+            user.setCity(userDTO.getCity());
+            user.setZipCode(userDTO.getZipCode());
+
+            if (userDTO.getRoli() != null) {
+                Role role = roleRepository.findById(userDTO.getRoli())
+                        .orElseThrow(() -> new RoleNotFoundException("Role not found"));
+                user.setRole(role);
+            }
+
+            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            }
+
+            userRepository.save(user);
+            return userService.toDTO(user);
+        }
+        throw new EntityNotFoundException("User not found");
     }
 
 }

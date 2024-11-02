@@ -27,7 +27,7 @@ public class CategoryService {
         if (category == null) {
             return null;
         }
-        return new CategoryDTO(category.getName());
+        return new CategoryDTO(category.getId(),category.getName());
     }
 
 
@@ -37,6 +37,7 @@ public class CategoryService {
         }
         Category category = new Category();
         category.setName(categoryDTO.getName());
+        category.setId(categoryDTO.getId());
         return category;
     }
 

@@ -33,7 +33,9 @@ public class OrderService {
 
 
         return new OrderDTO(
+                order.getId(),
                 order.getUser() != null ? order.getUser().getId() : null,
+                order.getUser() != null ? order.getUser().getEmail() : null,
                 order.getTotalCost(),
                 order.getDeliveryAddress(),
                 order.getOrderDate(),
@@ -52,6 +54,7 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Order order = new Order();
+        order.setId(orderModel.getId());
         order.setUser(user);
         order.setTotalCost(orderModel.getTotalCost());
         order.setDeliveryAddress(orderModel.getDeliveryAddress());

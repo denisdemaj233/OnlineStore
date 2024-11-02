@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/api/roles")
 @RequiredArgsConstructor
 public class RoleController {
-    //private final RoleService roleService;
+
     private final RoleRepository roleRepository;
 
     @GetMapping

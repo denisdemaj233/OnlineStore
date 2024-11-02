@@ -37,7 +37,7 @@ public class ProductService {
         Long authorId = product.getAuthor() != null ? product.getAuthor().getId() : null;
 
         return new ProductDTO(
-
+                product.getId(),
                 product.getTitle(),
                 product.getDescription(),
                 (double) product.getAvailability(),
@@ -54,6 +54,7 @@ public class ProductService {
         }
 
         Product product = new Product();
+        product.setId(productDTO.getId());
         product.setTitle(productDTO.getTitle());
         product.setDescription(productDTO.getDescription());
         product.setAvailability((int) productDTO.getAvailability());
@@ -117,6 +118,20 @@ public class ProductService {
         return products.stream()
                 .map(this::toDTO)
                 .toList();
+    }
+    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
+
+        product.setTitle(productDTO.getTitle());
+        product.setDescription(productDTO.getDescription());
+        product.setAvailability((int) productDTO.getAvailability());
+        product.setPrice(productDTO.getPrice());
+        product.setProductType(ProductType.valueOf(productDTO.getProductType()));
+
+
+        Product updatedProduct = productRepository.save(product);
+        return toDTO(updatedProduct);
     }
 
 

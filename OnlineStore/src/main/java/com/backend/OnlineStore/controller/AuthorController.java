@@ -3,8 +3,10 @@ package com.backend.OnlineStore.controller;
 import com.backend.OnlineStore.model.AuthorDTO;
 import com.backend.OnlineStore.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +21,11 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+        List<AuthorDTO> authors = authorService.getAllAuthors();
+        return ResponseEntity.ok(authors);
+    }
 
     @PostMapping
     public AuthorDTO saveAuthor(@RequestBody AuthorDTO authorDTO) {

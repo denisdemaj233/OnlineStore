@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,8 +29,10 @@ public class AuthorService {
         }
 
         Author author = new Author();
+        author.setId(dto.getId());
         author.setFirstName(dto.getFirstName());
         author.setLastName(dto.getLastName());
+
         return author;
     }
 
@@ -42,6 +45,7 @@ public class AuthorService {
         AuthorDTO authorDTO = new AuthorDTO();
         authorDTO.setFirstName(entity.getFirstName());
         authorDTO.setLastName(entity.getLastName());
+        authorDTO.setId(entity.getId());
         return authorDTO;
     }
 
@@ -52,6 +56,11 @@ public class AuthorService {
         return toDTO(savedAuthor);
     }
 
+    public List<AuthorDTO> getAllAuthors() {
+        return authorRepository.findAll().stream()
+                .map(author -> new AuthorDTO(author.getId(), author.getFirstName(), author.getLastName()))
+                .toList();
+    }
 
     public Optional<AuthorDTO> findAuthorById(Long id) {
         return Optional.ofNullable(authorRepository.findById(id)

@@ -15,7 +15,9 @@ import java.util.Set;
 public class OrderDTO {
 
 
+    private Long id;
     private Long userId;
+    private String email;
     private double totalCost;
     private String deliveryAddress;
     private Date orderDate;

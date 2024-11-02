@@ -30,6 +30,11 @@ public class ProductController {
         this.authorRepository = authorRepository;
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+        ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
+        return ResponseEntity.ok(updatedProduct);
+    }
 
     @GetMapping("/search")
     public Optional<List<ProductDTO>> searchProducts(@RequestParam String title) {
@@ -76,7 +81,7 @@ public class ProductController {
 
 
 
-    @DeleteMapping("/admin/{id}")
+    @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
     }

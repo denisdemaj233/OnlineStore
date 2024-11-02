@@ -26,7 +26,7 @@ public class RoleService {
         if (role == null) {
             return null;
         }
-        return new RoleDTO(role.getRoleName());
+        return new RoleDTO(role.getId(),role.getRoleName());
     }
 
 
@@ -35,6 +35,7 @@ public class RoleService {
             return null;
         }
         Role role = new Role();
+        role.setId(roleDTO.getId());
         role.setRoleName(roleDTO.getRoleName());
         return role;
     }

@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class OrderLineDTO {
 
-
+    private Long id;
     private Long orderId;
     private Long productId;
     private int quantity;
